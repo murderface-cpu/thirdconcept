@@ -1,0 +1,109 @@
+{% extends 'admin_base.html' %}
+{% block title %}Messages — Third Concept{% endblock %}
+{% block breadcrumb %}Messages{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div>
+        <h1>Messages</h1>
+        <p style="font-size:13px;color:var(--text-muted);margin-top:4px">Contact form submissions from your website</p>
+    </div>
+</div>
+
+{% if messages %}
+<div class="dashboard-card">
+    <div class="table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>From</th>
+                    <th>Organization</th>
+                    <th>Subject</th>
+                    <th>Status</th>
+                    <th>Received</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for msg in messages %}
+                <tr data-id="{{ msg[0] }}">
+                    <td>
+                        <div class="user-info">
+                            <div class="user-avatar">{{ msg[1][0].upper() }}</div>
+                            <div>
+                                <div style="color:var(--text-primary);font-weight:500;font-size:13px">{{ msg[1] }}</div>
+                                <div style="font-size:11px;color:var(--text-muted)">{{ msg[2] }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ msg[3] or '—' }}</td>
+                    <td class="subject-cell"><span class="subject-text">{{ msg[4] }}</span></td>
+                    <td><span class="badge badge-{{ msg[6] }}">{{ msg[6].capitalize() }}</span></td>
+                    <td class="date-cell">{{ msg[7] }}</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-secondary" onclick="viewMessage('{{ loop.index0 }}')">View</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteMessage('{{ msg[0] }}')">Delete</button>
+                    </td>
+                </tr>
+                <script>
+                    window.messages = window.messages || [];
+                    window.messages.push({id:"{{ msg[0] }}",name:"{{ msg[1]|e }}",email:"{{ msg[2]|e }}",organization:"{{ msg[3]|e }}",subject:"{{ msg[4]|e }}",message:`{{ msg[5]|replace('\n','<br>')|e }}`,status:"{{ msg[6] }}",date:"{{ msg[7] }}"});
+                </script>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="dashboard-card"><div class="empty-state"><span class="empty-icon">✉</span><h4>No messages yet</h4><p>Contact form submissions will appear here as they arrive.</p></div></div>
+{% endif %}
+
+<!-- Message Modal -->
+<div id="msgModal" style="display:none;position:fixed;inset:0;background:rgba(13,17,23,0.8);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center;padding:24px;">
+    <div style="background:var(--ink-2);border:1px solid var(--border);border-radius:20px;max-width:580px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,0.5);">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--border);">
+            <h3 style="font-family:var(--font-display);font-size:16px;font-weight:600" id="modalSubject">Subject</h3>
+            <button onclick="closeModal()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:20px;padding:4px">×</button>
+        </div>
+        <div style="padding:24px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+                <div>
+                    <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">From</div>
+                    <div style="font-size:14px;color:var(--text-primary);font-weight:500" id="modalName"></div>
+                    <div style="font-size:12px;color:var(--sage)" id="modalEmail"></div>
+                </div>
+                <div>
+                    <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">Organization</div>
+                    <div style="font-size:14px;color:var(--text-secondary)" id="modalOrg"></div>
+                </div>
+            </div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Message</div>
+            <div id="modalBody" style="font-size:14px;color:var(--text-secondary);line-height:1.7;background:var(--surface);border-radius:var(--radius);padding:16px;"></div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:12px" id="modalDate"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function viewMessage(idx) {
+    const m = window.messages[idx];
+    document.getElementById('modalSubject').textContent = m.subject;
+    document.getElementById('modalName').textContent = m.name;
+    document.getElementById('modalEmail').textContent = m.email;
+    document.getElementById('modalOrg').textContent = m.organization || '—';
+    document.getElementById('modalBody').innerHTML = m.message;
+    document.getElementById('modalDate').textContent = 'Received: ' + m.date;
+    document.getElementById('msgModal').style.display = 'flex';
+}
+function closeModal() { document.getElementById('msgModal').style.display = 'none'; }
+document.getElementById('msgModal').addEventListener('click', function(e) { if(e.target === this) closeModal(); });
+async function deleteMessage(id) {
+    if (!confirm('Delete this message permanently?')) return;
+    const r = await fetch(`/admin/messages/${id}/delete`, {method:'POST'});
+    if (r.ok) { document.querySelector(`tr[data-id="${id}"]`).remove(); showNotification('Message deleted', 'success'); }
+    else showNotification('Could not delete message', 'danger');
+}
+</script>
+{% endblock %}

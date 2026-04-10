@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — Third Concept Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_login.css') }}">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --ink: #0d1117; --ink-2: #161c24; --ink-3: #1e2936;
+            --surface: #192231; --border: rgba(255,255,255,0.08);
+            --sage: #4eba8a; --sage-dim: rgba(78,186,138,0.12);
+            --gold: #e8b86d; --clay: #d4735a;
+            --text-primary: #f0ece4; --text-secondary: #8fa3b8; --text-muted: #4f6278;
+            --font-display: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+            --radius: 12px; --transition: 200ms cubic-bezier(.4,0,.2,1);
+        }
+
+        html, body { height: 100%; }
+        body {
+            font-family: var(--font-body);
+            background: var(--ink);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Ambient background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 800px 600px at 20% 50%, rgba(78,186,138,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse 600px 500px at 80% 50%, rgba(232,184,109,0.05) 0%, transparent 60%),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            background-size: cover, cover, 180px;
+            pointer-events: none;
+        }
+
+        /* Grid lines decoration */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+        }
+
+        .login-wrap {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            padding: 24px;
+            animation: fadeUp 0.5s cubic-bezier(.4,0,.2,1);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Brand mark */
+        .login-brand {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .login-brand-icon {
+            display: inline-flex;
+            width: 52px; height: 52px;
+            background: linear-gradient(135deg, var(--sage), var(--gold));
+            border-radius: 14px;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 24px rgba(78,186,138,0.2);
+        }
+
+        .login-brand h1 {
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .login-brand p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Card */
+        .login-card {
+            background: var(--ink-2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.03);
+        }
+
+        .login-card h2 {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .login-card .subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+        }
+
+        /* Flash */
+        .flash-messages { margin-bottom: 20px; }
+        .flash-message {
+            padding: 11px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 8px;
+            border: 1px solid transparent;
+        }
+        .flash-error, .flash-danger { background: rgba(212,115,90,0.1); border-color: rgba(212,115,90,0.2); color: var(--clay); }
+        .flash-success { background: var(--sage-dim); border-color: rgba(78,186,138,0.2); color: var(--sage); }
+
+        /* Form */
+        .form-group { margin-bottom: 18px; }
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 7px;
+        }
+        .form-control {
+            width: 100%;
+            background: var(--ink-3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 11px 14px;
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 14px;
+            outline: none;
+            transition: all var(--transition);
+        }
+        .form-control:focus {
+            border-color: var(--sage);
+            box-shadow: 0 0 0 3px rgba(78,186,138,0.12);
+        }
+        .form-control::placeholder { color: var(--text-muted); }
+
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+            background: var(--sage);
+            color: var(--ink);
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all var(--transition);
+            margin-top: 6px;
+        }
+        .btn-block:hover {
+            background: #5dd4a0;
+            box-shadow: 0 6px 20px rgba(78,186,138,0.25);
+            transform: translateY(-1px);
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .login-footer a {
+            color: var(--sage);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition);
+        }
+        .login-footer a:hover { color: #5dd4a0; }
+
+        /* Bottom wordmark */
+        .login-wordmark {
+            text-align: center;
+            margin-top: 28px;
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.06em;
+        }
+    </style>
+</head>
+<body class="admin-login">
+    <div class="login-wrap">
+        <div class="login-brand">
+            <div class="login-brand-icon">🌿</div>
+            <h1>Third Concept</h1>
+            <p>Empowering Children Through Education</p>
+        </div>
+
+        <div class="login-card">
+            <h2>Welcome back</h2>
+            <p class="subtitle">Sign in to access the admin dashboard</p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.username.label(class="form-label") }}
+                    {{ form.username(class="form-control", placeholder="Enter your username") }}
+                </div>
+                <div class="form-group">
+                    {{ form.password.label(class="form-label") }}
+                    {{ form.password(class="form-control", placeholder="••••••••") }}
+                </div>
+                {{ form.submit(class="btn-block") }}
+            </form>
+        </div>
+
+        <div class="login-footer">
+            <a href="{{ url_for('home') }}">← Back to main website</a>
+        </div>
+        <div class="login-wordmark">THIRD CONCEPT · NAIROBI, KENYA</div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,51 @@
+{% extends 'admin_base.html' %}
+{% block title %}Analytics — Third Concept{% endblock %}
+{% block breadcrumb %}Analytics{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+    <div><h1>Analytics</h1><p style="font-size:13px;color:var(--text-muted);margin-top:4px">Website traffic and visitor insights</p></div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon-wrap">📄</div>
+        <div class="stat-content"><h3>{{ total_views }}</h3><p>Total Page Views</p></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon-wrap">👥</div>
+        <div class="stat-content"><h3>{{ unique_visitors }}</h3><p>Unique Visitors</p></div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="dashboard-card">
+        <div class="card-header"><h3>Views by Page</h3></div>
+        <div style="padding:12px 0">
+            {% for page, views in page_views %}
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 22px;border-bottom:1px solid var(--border);">
+                <div style="flex:1;font-size:13px;color:var(--text-secondary)">{{ page }}</div>
+                <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text-primary)">{{ views }}</div>
+                <div style="width:80px;height:4px;background:var(--surface);border-radius:2px;overflow:hidden">
+                    <div style="height:100%;background:var(--sage);border-radius:2px;width:{{ [views * 100 // (page_views[0][1] if page_views else 1), 100]|min }}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="card-header"><h3>Views — Last 30 Days</h3></div>
+        <div style="padding:12px 0;max-height:360px;overflow-y:auto">
+            {% for date, views in daily_views %}
+            <div style="display:flex;align-items:center;gap:12px;padding:9px 22px;border-bottom:1px solid var(--border);">
+                <div style="flex:1;font-size:12px;color:var(--text-muted);font-variant-numeric:tabular-nums">{{ date }}</div>
+                <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--text-primary)">{{ views }}</div>
+                <div style="width:80px;height:4px;background:var(--surface);border-radius:2px;overflow:hidden">
+                    <div style="height:100%;background:var(--gold);border-radius:2px;width:{{ [views * 100 // (daily_views|map(attribute=1)|max if daily_views else 1), 100]|min }}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

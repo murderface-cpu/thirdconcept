@@ -1,0 +1,227 @@
+{% extends 'admin_base.html' %}
+{% block title %}Dashboard — Third Concept{% endblock %}
+{% block breadcrumb %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div>
+        <h1>Dashboard</h1>
+        <p style="font-size:13px;color:var(--text-muted);margin-top:4px">Welcome back. Here's what's happening today.</p>
+    </div>
+    <button class="btn btn-secondary" onclick="refreshStats()">
+        <span id="refreshIcon">↻</span> Refresh
+    </button>
+</div>
+
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon-wrap">✉</div>
+        <div class="stat-content">
+            <h3 id="newMessages">{{ new_messages }}</h3>
+            <p>New Messages</p>
+        </div>
+        <div class="stat-trend positive">+12%</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon-wrap">💬</div>
+        <div class="stat-content">
+            <h3 id="totalMessages">{{ total_messages }}</h3>
+            <p>Total Messages</p>
+        </div>
+        <div class="stat-trend positive">+8%</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon-wrap">👥</div>
+        <div class="stat-content">
+            <h3 id="totalUsers">{{ total_users }}</h3>
+            <p>Total Users</p>
+        </div>
+        <div class="stat-trend neutral">0%</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon-wrap">📊</div>
+        <div class="stat-content">
+            <h3 id="weeklyViews">{{ weekly_views }}</h3>
+            <p>Weekly Views</p>
+        </div>
+        <div class="stat-trend positive">+15%</div>
+    </div>
+</div>
+
+<!-- Charts and Messages -->
+<div class="dashboard-grid">
+    <div class="dashboard-card chart-card">
+        <div class="card-header">
+            <h3>Page Views — Last 7 Days</h3>
+            <div class="card-actions">
+                <button class="btn btn-sm btn-secondary" onclick="toggleChartType()">Toggle View</button>
+            </div>
+        </div>
+        <div style="position:relative;height:260px;padding:20px;">
+            <canvas id="viewsChart"></canvas>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3>Recent Messages</h3>
+            <div class="card-actions">
+                <div class="status-indicator online"></div>
+                <span class="status-text">Live</span>
+            </div>
+        </div>
+        <div class="table-container">
+            {% if recent_messages %}
+                <table class="admin-table">
+                    <thead><tr><th>Name</th><th>Subject</th><th>Date</th><th></th></tr></thead>
+                    <tbody>
+                        {% for message in recent_messages %}
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">{{ message[0][0].upper() }}</div>
+                                    <span style="color:var(--text-primary);font-weight:500">{{ message[0] }}</span>
+                                </div>
+                            </td>
+                            <td class="subject-cell"><span class="subject-text">{{ message[2][:32] }}{% if message[2]|length > 32 %}…{% endif %}</span></td>
+                            <td class="date-cell">{{ message[3] }}</td>
+                            <td><button class="btn btn-xs btn-secondary" onclick="window.location='{{ url_for('admin_messages') }}'">View</button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty-state">
+                    <span class="empty-icon">📭</span>
+                    <h4>No messages yet</h4>
+                    <p>New contact form submissions will appear here</p>
+                </div>
+            {% endif %}
+        </div>
+        <div class="card-footer">
+            <a href="{{ url_for('admin_messages') }}" class="btn btn-secondary btn-sm">View All Messages →</a>
+        </div>
+    </div>
+</div>
+
+<!-- System Status + Quick Actions -->
+<div class="dashboard-grid">
+    <div class="dashboard-card">
+        <div class="card-header"><h3>System Status</h3></div>
+        <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div style="display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:var(--radius);padding:14px;">
+                <div class="status-indicator online"></div>
+                <div><div style="font-size:13px;font-weight:500;color:var(--text-primary)">Database</div><div style="font-size:11px;color:var(--text-muted)">Connected</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:var(--radius);padding:14px;">
+                <div class="status-indicator online"></div>
+                <div><div style="font-size:13px;font-weight:500;color:var(--text-primary)">Email</div><div style="font-size:11px;color:var(--text-muted)">Operational</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:var(--radius);padding:14px;">
+                <div class="status-indicator warning"></div>
+                <div><div style="font-size:13px;font-weight:500;color:var(--text-primary)">Backup</div><div style="font-size:11px;color:var(--text-muted)">2 hours ago</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:var(--radius);padding:14px;">
+                <div class="status-indicator online"></div>
+                <div><div style="font-size:13px;font-weight:500;color:var(--text-primary)">SSL</div><div style="font-size:11px;color:var(--text-muted)">Valid · 90 days</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="card-header"><h3>Quick Actions</h3></div>
+        <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <a href="{{ url_for('admin_project_new') }}" style="display:flex;flex-direction:column;align-items:flex-start;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-decoration:none;transition:all var(--transition);" onmouseover="this.style.borderColor='var(--sage)'" onmouseout="this.style.borderColor='var(--border)'">
+                <span style="font-size:20px">◈</span>
+                <span style="font-size:13px;font-weight:600;color:var(--text-primary)">New Project</span>
+                <span style="font-size:11px;color:var(--text-muted)">Add content</span>
+            </a>
+            <a href="{{ url_for('admin_team_new') }}" style="display:flex;flex-direction:column;align-items:flex-start;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-decoration:none;transition:all var(--transition);" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+                <span style="font-size:20px">◉</span>
+                <span style="font-size:13px;font-weight:600;color:var(--text-primary)">Add Member</span>
+                <span style="font-size:11px;color:var(--text-muted)">Grow team</span>
+            </a>
+            <a href="{{ url_for('admin_user_new') }}" style="display:flex;flex-direction:column;align-items:flex-start;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-decoration:none;transition:all var(--transition);" onmouseover="this.style.borderColor='var(--sky)'" onmouseout="this.style.borderColor='var(--border)'">
+                <span style="font-size:20px">⊙</span>
+                <span style="font-size:13px;font-weight:600;color:var(--text-primary)">Create User</span>
+                <span style="font-size:11px;color:var(--text-muted)">Access control</span>
+            </a>
+            <a href="{{ url_for('admin_settings') }}" style="display:flex;flex-direction:column;align-items:flex-start;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-decoration:none;transition:all var(--transition);" onmouseover="this.style.borderColor='var(--clay)'" onmouseout="this.style.borderColor='var(--border)'">
+                <span style="font-size:20px">⊛</span>
+                <span style="font-size:13px;font-weight:600;color:var(--text-primary)">Settings</span>
+                <span style="font-size:11px;color:var(--text-muted)">Configure</span>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const ctx = document.getElementById('viewsChart').getContext('2d');
+const dailyViews = {{ daily_views | tojson | safe }};
+let isLine = true;
+
+Chart.defaults.color = '#4f6278';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+
+let viewsChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: dailyViews.map(i => new Date(i[0]).toLocaleDateString('en-US',{month:'short',day:'numeric'})),
+        datasets: [{
+            label: 'Page Views',
+            data: dailyViews.map(i => i[1]),
+            borderColor: '#4eba8a',
+            backgroundColor: 'rgba(78,186,138,0.08)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#4eba8a',
+            pointBorderColor: '#161c24',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { stepSize: 1 } },
+            x: { grid: { display: false } }
+        },
+        interaction: { intersect: false, mode: 'index' }
+    }
+});
+
+function toggleChartType() {
+    viewsChart.config.type = isLine ? 'bar' : 'line';
+    viewsChart.config.data.datasets[0].fill = !isLine;
+    viewsChart.config.data.datasets[0].tension = isLine ? 0 : 0.4;
+    if (!isLine) viewsChart.config.data.datasets[0].backgroundColor = 'rgba(78,186,138,0.08)';
+    else viewsChart.config.data.datasets[0].backgroundColor = 'rgba(78,186,138,0.6)';
+    viewsChart.update(); isLine = !isLine;
+}
+
+async function refreshStats() {
+    const icon = document.getElementById('refreshIcon');
+    icon.style.animation = 'spin 0.8s linear infinite';
+    try {
+        const r = await fetch('/api/admin/stats');
+        const d = await r.json();
+        const el = (id, v) => { const e = document.getElementById(id); e.style.opacity=0; setTimeout(()=>{e.textContent=v;e.style.opacity=1;},200); };
+        el('newMessages', d.daily_messages||0);
+        el('weeklyViews', d.daily_views||0);
+        showNotification('Stats updated', 'success');
+    } catch(e) {
+        showNotification('Could not refresh stats', 'danger');
+    } finally {
+        icon.style.animation = '';
+    }
+}
+
+setInterval(refreshStats, 300000);
+</script>
+{% endblock %}

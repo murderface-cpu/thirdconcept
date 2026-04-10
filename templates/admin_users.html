@@ -1,0 +1,49 @@
+{% extends 'admin_base.html' %}
+{% block title %}Users — Third Concept{% endblock %}
+{% block breadcrumb %}Users{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+    <div><h1>Users</h1><p style="font-size:13px;color:var(--text-muted);margin-top:4px">Admin accounts and access management</p></div>
+    <a href="{{ url_for('admin_user_new') }}" class="btn btn-primary">+ New User</a>
+</div>
+{% if users %}
+<div class="dashboard-card">
+    <div class="table-container">
+        <table class="admin-table">
+            <thead><tr><th>User</th><th>Email</th><th>Role</th><th>Status</th><th>Created</th><th>Last Login</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>
+                        <div class="user-info">
+                            <div class="user-avatar">{{ user[1][0].upper() }}</div>
+                            <span style="color:var(--text-primary);font-weight:500">{{ user[1] }}</span>
+                        </div>
+                    </td>
+                    <td>{{ user[2] }}</td>
+                    <td><span style="font-size:11px;background:var(--surface);color:var(--text-secondary);padding:2px 8px;border-radius:20px;font-weight:600">{{ user[3] }}</span></td>
+                    <td>
+                        {% if user[6] %}
+                            <span class="badge badge-active">Active</span>
+                        {% else %}
+                            <span class="badge badge-inactive">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td class="date-cell">{{ user[4] }}</td>
+                    <td class="date-cell">{{ user[5] or '—' }}</td>
+                    <td class="action-buttons">
+                        <a href="{{ url_for('admin_user_edit', user_id=user[0]) }}" class="btn btn-sm btn-outline">Edit</a>
+                        <form action="{{ url_for('admin_user_delete', user_id=user[0]) }}" method="POST" style="display:inline">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this user?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="dashboard-card"><div class="empty-state"><span class="empty-icon">⊙</span><h4>No users found</h4><p>Click "New User" to create your first admin account.</p></div></div>
+{% endif %}
+{% endblock %}

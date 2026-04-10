@@ -1,0 +1,20 @@
+{% extends 'admin_base.html' %}
+{% block title %}Import Projects — Third Concept{% endblock %}
+{% block breadcrumb %}Projects · Import{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+    <div><h1>Import Projects</h1><p style="font-size:13px;color:var(--text-muted);margin-top:4px">Bulk import project data from a JSON file</p></div>
+    <a href="{{ url_for('admin_projects') }}" class="btn btn-secondary">← Back to Projects</a>
+</div>
+<div class="form-card">
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() if form.hidden_tag is defined }}
+        <div class="form-group">
+            <label class="form-label">JSON File</label>
+            <input type="file" name="json_file" accept=".json" class="form-input" style="cursor:pointer">
+            <div style="font-size:11px;color:var(--text-muted);margin-top:6px">Upload a .json file containing an array of project objects.</div>
+        </div>
+        <button type="submit" class="btn btn-primary">Import</button>
+    </form>
+</div>
+{% endblock %}

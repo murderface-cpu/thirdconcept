@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Third Concept | Empowering Vulnerable Children Through Education</title>
+  <meta name="description" content="Third Concept is a non-profit organization dedicated to empowering children from vulnerable backgrounds in Kenya through education, sustainable programs, and community support initiatives.">
+  <meta name="keywords" content="Third Concept, NGO Kenya, Child Education, Vulnerable Children, Nonprofit Kisumu, Sustainable Programs, Community Empowerment, School Support Kenya">
+  <meta name="author" content="Third Concept NGO">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Third Concept | Empowering Vulnerable Children Through Education">
+  <meta property="og:description" content="Join Third Concept in transforming lives by providing education and hope for vulnerable children in Kenya. Learn more about our programs, impact stories, and how you can get involved.">
+  <meta property="og:image" content="{{ url_for('static', filename='images/og-image.png', _external=True) }}">
+  <meta property="og:url" content="{{ request.url }}">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Third Concept | Empowering Vulnerable Children">
+  <meta name="twitter:description" content="Support Third Concept’s mission to uplift children in vulnerable communities in Kenya through education and sustainable development programs.">
+  <meta name="twitter:image" content="{{ url_for('static', filename='images/twitter-card.png', _external=True) }}">
+
+  <link rel="canonical" href="{{ request.url }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="{{ url_for('home') }}">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Third Concept" class="logo-image">
+                </a>
+            </div>
+
+            <ul class="nav-links">
+                <li><a href="{{ url_for('home') }}" class="nav-link {{ 'active' if current_page == 'home' else '' }}">Home</a></li>
+                <li><a href="{{ url_for('about') }}" class="nav-link {{ 'active' if current_page == 'about' else '' }}">About</a></li>
+                <li><a href="{{ url_for('services') }}" class="nav-link {{ 'active' if current_page == 'services' else '' }}">Services</a></li>
+                <li><a href="{{ url_for('activities') }}" class="nav-link {{ 'active' if current_page == 'projects' else '' }}">Projects</a></li>
+                <li><a href="{{ url_for('team') }}" class="nav-link {{ 'active' if current_page == 'team' else '' }}">Team</a></li>
+                <li><a href="{{ url_for('contact') }}" class="nav-link {{ 'active' if current_page == 'contact' else '' }}">Contact</a></li>
+            </ul>
+            <button class="menu-toggle" onclick="toggleMobileMenu()">☰</button>
+        </div>
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('about') }}">About</a>
+            <a href="{{ url_for('services') }}">Services</a>
+            <a href="{{ url_for('activities') }}">Projects</a>
+            <a href="{{ url_for('team') }}">Team</a>
+            <a href="{{ url_for('contact') }}">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        {{ message }}
+                        <button onclick="this.parentElement.style.display='none'">×</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- HOME PAGE -->
+    {% if current_page == 'home' %}
+    <section class="hero">
+    <div class="hero-content">
+        <h1>Empowering Children for a Brighter Tomorrow</h1>
+        <p>We uplift vulnerable children by providing access to education, life skills, and supportive community programs. Together, we’re creating opportunities for a brighter, equitable future for every child.</p>
+        <a href="{{ url_for('about') }}" class="cta-button">Discover Our Work</a>
+    </div>
+    </section>
+
+    <section class="section">
+    <div class="container">
+        <h2 class="section-title">Our Core Values</h2>
+        <div class="card-grid">
+        <div class="card">
+            <div class="card-icon">📖</div>
+            <h3>Equity in Education</h3>
+            <p>We believe every child deserves the right to quality education, regardless of their background or circumstances.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🤝</div>
+            <h3>Community Empowerment</h3>
+            <p>Our initiatives engage families and local communities to support safe, inclusive, and nurturing learning environments for children.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">💡</div>
+            <h3>Innovative Solutions</h3>
+            <p>We develop creative, community-driven approaches to overcome educational barriers faced by vulnerable children.</p>
+        </div>
+        </div>
+    </div>
+    </section>
+    {% endif %}
+
+    <!-- ABOUT PAGE -->
+    {% if current_page == 'about' %}
+    <section class="section" style="padding-top: 8rem;">
+    <div class="container">
+        <h2 class="section-title">About Third Concept</h2>
+        <div class="about-content">
+        <div class="about-text">
+            <p>Third Concept is committed to transforming lives by providing vulnerable children with access to education and essential life skills. We believe education is the most powerful tool to break the cycle of poverty and build a brighter, fairer future.</p>
+
+            <p>Our multidisciplinary team blends expertise in education, community development, and social advocacy. We work closely with communities to identify challenges, design practical solutions, and create safe learning spaces for children.</p>
+
+            <p>We envision a world where every child has the opportunity to learn, grow, and pursue their dreams — regardless of socio-economic limitations. Our programs are built on compassion, innovation, and community partnership.</p>
+        </div>
+        <div class="about-image">
+            <img src="{{ url_for('static', filename='images/about-image.png') }}" loading="lazy" alt="This is banner for about page." style="width: 100%; height: 400px; display: flex; align-items: center; justify-content: center; font-size: 4rem;">
+            <!--<div style="width: 100%; height: 400px; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem;">📚</div>-->
+        </div>
+        </div>
+    </div>
+    </section>
+
+    <section class="section">
+    <div class="container">
+        <h2 class="section-title">Our Mission</h2>
+        <div class="card-grid">
+        <div class="card">
+            <div class="card-icon">🎯</div>
+            <h3>Purpose</h3>
+            <p>To create inclusive programs that enable vulnerable children to access quality education and holistic support.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">👁️</div>
+            <h3>Vision</h3>
+            <p>A world where every child, regardless of their background, is empowered through education and life-changing opportunities.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">⚖️</div>
+            <h3>Values</h3>
+            <p>Equity, compassion, innovation, inclusivity, and collaborative partnerships with the communities we serve.</p>
+        </div>
+        </div>
+    </div>
+    </section>
+    {% endif %}
+
+    <!-- SERVICES PAGE -->
+    {% if current_page == 'services' %}
+    <section class="section" style="padding-top: 8rem;">
+    <div class="container">
+        <h2 class="section-title">Our Services</h2>
+        <div class="card-grid">
+        <div class="card">
+            <div class="card-icon">📖</div>
+            <h3>Child Sponsorship</h3>
+            <p>Providing scholarships, school materials, and mentorship programs to help vulnerable children stay in school and thrive academically.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🎓</div>
+            <h3>Educational Support</h3>
+            <p>After-school tutoring, literacy initiatives, and digital learning programs tailored to uplift marginalized children and close learning gaps.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🏘️</div>
+            <h3>Community Engagement</h3>
+            <p>Workshops and outreach initiatives that involve parents and local leaders in supporting children's education and well-being.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">📊</div>
+            <h3>Progress Tracking</h3>
+            <p>Regular monitoring of students' academic performance and attendance to ensure impactful, data-driven interventions.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🤝</div>
+            <h3>School Partnerships</h3>
+            <p>Collaborating with schools to improve learning facilities, teacher training, and inclusive educational resources for children.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">💡</div>
+            <h3>Innovative Programs</h3>
+            <p>Introducing creative educational models, mentorship circles, and safe spaces that foster resilience and ambition among children.</p>
+        </div>
+        </div>
+    </div>
+    </section>
+    {% endif %}
+
+    <!-- PROJECTS PAGE -->
+    {% if current_page == 'projects' %}
+    <section class="section" style="padding-top: 8rem;">
+      <div class="container">
+        <h2 class="section-title">Our Projects</h2>
+        <div class="card-grid">
+          
+        </div>
+      </div>
+    </section>
+    {% endif %}
+
+    {% if current_page == 'project_detail' %}
+    <section class="section" style="padding-top: 8rem;">
+    <div class="container">
+        <div class="blog-header">
+        <h1 class="section-title">{{ project[1] }}</h1>
+        </div>
+
+        {% if project[3] %}
+        <div class="blog-image" style="margin: 2rem 0;">
+        <img src="{{ url_for('static', filename= project[7]) }}" alt="{{ project[2]}}" style="max-width: 100%; max-height: 350px; width: auto; height: auto; object-fit: contain; border-radius: 8px; display: inline-block;">
+        </div>
+        {% endif %}
+
+        <div class="about-content">
+        <div class="about-text">
+            <!-- <p><strong>Description:</strong> {{ project[2] }}</p>
+            <p><strong>Tags:</strong> {{ project[4] }}</p>
+            <p><strong>Start Date:</strong> {{ project[6] }}</p>
+            <p><strong>Status:</strong> {{ project[5] }}</p>
+
+            <h3 style="margin-top: 2rem;">Impact Summary</h3>
+            <p>{{ project[2] }}</p>
+
+            <h3 style="margin-top: 2rem;">Full Content</h3> -->
+            <div class="markdown-content" id="markdown-content">
+                <!-- Markdown content will be rendered here if JavaScript is enabled -->
+                <div class="markdown-raw" style="display: none;">{{ project[8] }}</div>
+                <!-- Fallback for when JavaScript is disabled -->
+                <noscript>
+                    <div style="background-color: #f8f9fa; padding: 1rem; border-radius: 5px; border-left: 4px solid #007bff;">
+                        <strong>Note:</strong> This content contains markdown formatting. Enable JavaScript for better formatting.
+                        <pre style="white-space: pre-wrap; margin-top: 1rem;">{{ project[8] }}</pre>
+                    </div>
+                </noscript>
+            </div>
+        </div>
+        </div>
+
+        <a href="{{ url_for('activities') }}" class="cta-button" style="margin-top: 2rem;">← Back to Projects</a>
+    </div>
+    </section>
+    {% endif %}
+
+
+    <!-- TEAM PAGE -->
+    {% if current_page == 'team' %}
+    <section class="section" style="padding-top: 8rem;">
+        <div class="container">
+            <h2 class="section-title">Meet Our Team</h2>
+            <div class="team-grid">
+                
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Our Advisory Board</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Our advisory board consists of distinguished leaders in environmental science, sustainable development, and social innovation. They provide strategic guidance and ensure our work maintains the highest standards of impact and integrity.</p>
+
+                    <p>Board members include representatives from leading universities, international development organizations, and successful sustainable enterprises. Their diverse expertise helps us navigate complex challenges and identify emerging opportunities for positive impact.</p>
+
+                    <p>We're proud to work with advisors who share our commitment to creating lasting, positive change through innovative, community-centered solutions.</p>
+                </div>
+                <div class="about-image">
+                    <div style="width: 100%; height: 400px; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem;">👥</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- CONTACT PAGE -->
+    {% if current_page == 'contact' %}
+    <section class="section" style="padding-top: 8rem;">
+        <div class="container">
+            <h2 class="section-title">Get In Touch</h2>
+            <div class="contact-form">
+                <form method="POST" action="{{ url_for('contact') }}" id="contactForm">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name(class="form-control") }}
+                        {% if form.name.errors %}
+                            <div class="form-errors">
+                                {% for error in form.name.errors %}
+                                    <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.email.label(class="form-label") }}
+                        {{ form.email(class="form-control") }}
+                        {% if form.email.errors %}
+                            <div class="form-errors">
+                                {% for error in form.email.errors %}
+                                    <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.organization.label(class="form-label") }}
+                        {{ form.organization(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.subject.label(class="form-label") }}
+                        {{ form.subject(class="form-control") }}
+                        {% if form.subject.errors %}
+                            <div class="form-errors">
+                                {% for error in form.subject.errors %}
+                                    <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.message.label(class="form-label") }}
+                        {{ form.message(class="form-control", placeholder="Tell us about your project or how we can help...") }}
+                        {% if form.message.errors %}
+                            <div class="form-errors">
+                                {% for error in form.message.errors %}
+                                    <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {{ form.submit(class="submit-btn") }}
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon">📍</div>
+                    <h3>Office Location</h3>
+                    <p>Nairobi, Kenya<br>
+                    We serve clients across East Africa and beyond</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📧</div>
+                    <h3>Email Us</h3>
+                    <p>thirdconcept2025@gmail.com<br>
+                    partnerships@thirdconcept.co.ke</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📱</div>
+                    <h3>Call Us</h3>
+                    <p>+254 700 @000 000<br>
+                    Available Monday - Friday, 8AM - 6PM EAT</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Third Concept</h3>
+                    <p>Empowering vulnerable children through access to education. We create opportunities for learning, growth, and brighter futures in underserved communities.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <p><a href="{{ url_for('home') }}">Home</a></p>
+                    <p><a href="{{ url_for('about') }}">About Us</a></p>
+                    <p><a href="{{ url_for('services') }}">Services</a></p>
+                    <p><a href="{{ url_for('activities') }}">Projects</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <p>Nairobi, Kenya</p>
+                    <p>thirdconcept2025@gmail.com</p>
+                    <p>+254 700 000 000</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow Our Impact</h3>
+                    <p>Stay connected to inspiring stories of resilience, academic success, and lasting change as we work to educate and uplift the next generation.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; {{ current_year }} Third Concept. All rights reserved. | Designed to uplift children through education.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script async type='module' src='https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js'></script>
+<zapier-interfaces-chatbot-embed is-popup='true' chatbot-id='cmmc5r8p40012iiwpw2gq0ys0'></zapier-interfaces-chatbot-embed>
+</body>
+</html>

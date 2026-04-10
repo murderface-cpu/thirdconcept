@@ -1,0 +1,41 @@
+{% extends 'admin_base.html' %}
+{% block title %}Projects — Third Concept{% endblock %}
+{% block breadcrumb %}Projects{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+    <div><h1>Projects</h1><p style="font-size:13px;color:var(--text-muted);margin-top:4px">Manage your impact projects and initiatives</p></div>
+    <div class="button-group">
+        <a href="{{ url_for('admin_project_import') }}" class="btn btn-secondary">↓ Import JSON</a>
+        <a href="{{ url_for('admin_project_new') }}" class="btn btn-primary">+ New Project</a>
+    </div>
+</div>
+{% if projects %}
+<div class="dashboard-card">
+    <div class="table-container">
+        <table class="admin-table">
+            <thead><tr><th></th><th>Title</th><th>Description</th><th>Tags</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for project in projects %}
+                <tr>
+                    <td style="font-size:20px;padding:13px 10px 13px 16px">{{ project[3] }}</td>
+                    <td style="color:var(--text-primary);font-weight:500">{{ project[1] }}</td>
+                    <td class="subject-cell"><span class="subject-text">{{ project[2] }}</span></td>
+                    <td>{% if project[4] %}<span style="font-size:11px;background:var(--surface);color:var(--text-muted);padding:2px 8px;border-radius:20px">{{ project[4] }}</span>{% else %}—{% endif %}</td>
+                    <td><span class="badge badge-{{ project[5] }}">{{ project[5].capitalize() }}</span></td>
+                    <td class="date-cell">{{ project[6] }}</td>
+                    <td class="action-buttons">
+                        <a href="{{ url_for('admin_project_edit', project_id=project[0]) }}" class="btn btn-sm btn-outline">Edit</a>
+                        <form action="{{ url_for('admin_project_delete', project_id=project[0]) }}" method="POST" style="display:inline">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this project?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="dashboard-card"><div class="empty-state"><span class="empty-icon">◈</span><h4>No projects yet</h4><p>Click "New Project" to showcase your first initiative, or import from JSON.</p></div></div>
+{% endif %}
+{% endblock %}

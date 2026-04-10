@@ -1,0 +1,45 @@
+{% extends 'admin_base.html' %}
+{% block title %}Team — Third Concept{% endblock %}
+{% block breadcrumb %}Team{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+    <div><h1>Team</h1><p style="font-size:13px;color:var(--text-muted);margin-top:4px">The people behind Third Concept</p></div>
+    <div class="button-group">
+        <a href="{{ url_for('admin_team_import') }}" class="btn btn-secondary">↓ Import JSON</a>
+        <a href="{{ url_for('admin_team_new') }}" class="btn btn-primary">+ Add Member</a>
+    </div>
+</div>
+{% if team_members %}
+<div class="dashboard-card">
+    <div class="table-container">
+        <table class="admin-table">
+            <thead><tr><th>Member</th><th>Role</th><th>Bio</th><th>Status</th><th>Added</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for member in team_members %}
+                <tr>
+                    <td>
+                        <div class="user-info">
+                            <div class="user-avatar">{{ member[1][0].upper() }}</div>
+                            <span style="color:var(--text-primary);font-weight:500">{{ member[1] }}</span>
+                        </div>
+                    </td>
+                    <td><span style="font-size:12px;color:var(--gold)">{{ member[2] }}</span></td>
+                    <td class="subject-cell"><span class="subject-text">{{ member[3] }}</span></td>
+                    <td>{% if member[5] %}<span class="badge badge-active">Active</span>{% else %}<span class="badge badge-inactive">Inactive</span>{% endif %}</td>
+                    <td class="date-cell">{{ member[6] }}</td>
+                    <td class="action-buttons">
+                        <a href="{{ url_for('admin_team_edit', member_id=member[0]) }}" class="btn btn-sm btn-outline">Edit</a>
+                        <form action="{{ url_for('admin_team_delete', member_id=member[0]) }}" method="POST" style="display:inline">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Remove this team member?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="dashboard-card"><div class="empty-state"><span class="empty-icon">◉</span><h4>No team members yet</h4><p>Add your first team member to showcase the people driving your mission.</p></div></div>
+{% endif %}
+{% endblock %}
